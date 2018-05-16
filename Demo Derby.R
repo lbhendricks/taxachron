@@ -7,15 +7,15 @@ library(dplyr) #for data wrangling
 library(ggplot2) #for plotting
 
 #### LOAD IN OCCURRENCE DATA FROM PBDB ####
-canidae <-  pbdb_occurrences (limit="all", base_name="canidae",show=c("coords", "phylo", "ident"))
-canidae <- filter(canidae, !gnl == "", !fml == "") #Remove those occurrences without genus or family ID
-felidae <-  pbdb_occurrences (limit="all", base_name="felidae",show=c("coords", "phylo", "ident"))
-felidae <- filter(felidae, !gnl == "", !fml == "") #Remove those occurrences without genus or family ID
+canidae <-  pbdb_occurrences (limit="all", base_name="canidae",show=c("coords", "phylo", "ident")) %>% #download pbdb canidae data and
+  filter(!gnl == "", !fml == "") #Remove those occurrences without genus or family ID
+felidae <-  pbdb_occurrences (limit="all", base_name="felidae",show=c("coords", "phylo", "ident")) %>% #download pbdb felidae data and
+  filter(!gnl == "", !fml == "") #Remove those occurrences without genus or family ID
 
 x <- list(canidae,felidae) #through each taxonomic group into a list
 
-####  GENERATE LONGEVITY TABLES ####
-GenerateLongevityTable <- function(x){ #where x is a matrix of pbdb occurrence data fetched via pbdb_occurrences
+####  GENERATE LONGEVITY TABLES AND PLOT LONGEVITIES ####
+GenerateLongevities <- function(x){ #where x is a matrix of pbdb occurrence data fetched via pbdb_occurrences
   
   x <- as.data.frame(x)
   genera<-x$gnl #What are all genus occurrences for this taxonomic group?
@@ -30,9 +30,9 @@ for(i in 1:nrow(x)){
   this.taxon <- x$gnl[i] #Define the taxa
   all.occ.this.taxon <- filter(x, gnl == this.taxon) #Select all rows of that taxon
   FAD <- max(all.occ.this.taxon$eag, na.rm = T) #Find the max value (FAD) of that taxon...
-  outTable[this.taxon,1] <- FAD #...and insert it into column 1 (FAD)
+  outTable[this.taxon,1] <- as.numeric(as.character(FAD)) #...and insert it into column 1 (FAD)
   LAD <- min(all.occ.this.taxon$lag, na.rm = T) #Find the min value (LAD) of that taxon...
-  outTable[this.taxon,2] <- LAD #...and insert it into column 2
+  outTable[this.taxon,2] <- as.numeric(as.character(LAD)) #...and insert it into column 2
   longevity <- FAD - LAD #Calulate the species longevity...
   outTable[this.taxon,3] <- longevity #...and insert it into column 3
   Family <- all.occ.this.taxon$fml[1] #Find the family that genus belongs to (the first one in case two are assigned)
@@ -45,11 +45,31 @@ for(i in 1:nrow(x)){
 
 df <- as.data.frame(outTable) #Save Result to list
 
+# Plot the longevities
+plot(1,1, type = 'n',
+     xlim = c(0.001, max(as.numeric(as.character(df$FAD)), na.rm = TRUE)),
+     ylim = c(0, nrow(df)),
+     xlab = "Millions of Years BP",
+     ylab = "Genera",
+     yaxt = "n")
+
+colors <- c(rgb(0.1, 0.1, 0.1, 0.1, 0.5),
+            rgb(1, 0, 0, 0, 0.5))
+
+for (i in 1:nrow(df)) {
+  segments(as.numeric(as.character(df$LAD[i])), i,
+           as.numeric(as.character(df$FAD[i])), i)
+           # col = colors[as.numeric(factor(df$Family))[i]])
+}
 }
 
-LongevityTables <- lapply(x, GenerateLongevityTable)
+LongevityTables <- lapply(x, GenerateLongevities)
 names(LongevityTables) <- c("canid longevities","felid longevities")
 list2env(LongevityTables, envir = .GlobalEnv)
 
 #### PLOT GENUS LONGEVITIES ####
+
+
+
+
 
