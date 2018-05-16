@@ -9,7 +9,8 @@ taxachron_server<-(
 shinyServer(function(input, output) {
      
      dataInput<-reactive({
-          occurrences<-read.csv(paste("http://paleobiodb.org/data1.1/occs/list.txt?base_name=",input$taxon,"&show=ident&limit=99999",sep=""))
+          
+          occurrences<-read.csv(paste("http://earthlifeconsortium.org/api_v1/occ?taxon=",input,sep=""))
           
           occurrences$mean_age<-rowMeans(cbind(occurrences$early_age,occurrences$late_age))
           
