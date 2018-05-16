@@ -1,27 +1,32 @@
-#### DATA DEMO DERBY, ELC AND ePANDDA, MAY 15 - 18 2018 ####
+#### DATA DEMO DERBY, ELC AND ePANDDA, MAY 15 - 17 2018 ####
 ## WRITTEN BY GREGORY J. SMITH ##
 
 rm(list=ls()) #clear environment
 library(paleobioDB) #to read in fossil occurrence data from pbdb
 library(dplyr)
 
-#### Canidae ####
+#### LOAD IN OCCURRENCE DATA FROM PBDB ####
 canidae<-  pbdb_occurrences (limit="all", base_name="canidae",show=c("coords", "phylo", "ident"))
 canidae <- filter(canidae, !gnl == "", !fml == "") #Remove those occurrences without genus or family ID
-canidae <- as.data.frame(canidae)
+felidae<-  pbdb_occurrences (limit="all", base_name="felidae",show=c("coords", "phylo", "ident"))
+felidae <- filter(felidae, !gnl == "", !fml == "") #Remove those occurrences without genus or family ID
 
-genera<-canidae$gnl #What are all occurrences appearing in this Period?
-genus.names<-unique(genera) #What are the specific genus names appearing in this Period?
-num.genera<-length(genus.names) #How many genera are there? (will be number of rows in the results matrix)
-outTable<-matrix(NA,nrow=num.genera,ncol=5)
-colnames(outTable)<-c("FAD","LAD","Duration","Family", "Order")
-rownames(outTable)<-genus.names
+x <- list(canidae,felidae) #through each taxonomic group into a list
 
-t1<-Sys.time()
-for(i in 1:nrow(canidae)){
+GenerateLongevityTable <- function(x){ #where x is a matrix of pbdb occurrence data fetched via pbdb_occurrences
   
-  this.taxon <- canidae$gnl[i] #Define the taxa
-  all.occ.this.taxon <- filter(canidae, gnl == this.taxon) #Select all rows of that taxon
+  x <- as.data.frame(x)
+  genera<-x$gnl #What are all genus occurrences for this taxonomic group?
+  genus.names<-unique(genera) #What are the specific genus names?
+  num.genera<-length(genus.names) #How many genera are there? (will be number of rows in the results matrix)
+  outTable<-matrix(NA,nrow=num.genera,ncol=5)
+  colnames(outTable)<-c("FAD","LAD","Duration","Family", "Order")
+  rownames(outTable)<-genus.names
+  
+for(i in 1:nrow(x)){
+  
+  this.taxon <- x$gnl[i] #Define the taxa
+  all.occ.this.taxon <- filter(x, gnl == this.taxon) #Select all rows of that taxon
   FAD <- max(all.occ.this.taxon$eag, na.rm = T) #Find the max value (FAD) of that taxon...
   outTable[this.taxon,1] <- FAD #...and insert it into column 1 (FAD)
   LAD <- min(all.occ.this.taxon$lag, na.rm = T) #Find the min value (LAD) of that taxon...
@@ -33,8 +38,13 @@ for(i in 1:nrow(canidae)){
   Order <- all.occ.this.taxon$odl[1] #Find the order that genus belongs to (the first one in case two are assigned)
   outTable[this.taxon,5] <- as.character(Order) #...and insert the Order name into column 5
   outTable<-outTable
+  
 }
-df <- as.data.frame(outTable)
 
-t2<-Sys.time()
-t2-t1
+df <- as.data.frame(outTable) #Save Result to list
+
+}
+
+LongevityTables <- lapply(x, GenerateLongevityTable)
+names(LongevityTables) <- c("canid longevities","felid longevities)
+list2env(LongevityTables, envir = .GlobalEnv)
