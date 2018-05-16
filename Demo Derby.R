@@ -3,16 +3,18 @@
 
 rm(list=ls()) #clear environment
 library(paleobioDB) #to read in fossil occurrence data from pbdb
-library(dplyr)
+library(dplyr) #for data wrangling
+library(ggplot2) #for plotting
 
 #### LOAD IN OCCURRENCE DATA FROM PBDB ####
-canidae<-  pbdb_occurrences (limit="all", base_name="canidae",show=c("coords", "phylo", "ident"))
+canidae <-  pbdb_occurrences (limit="all", base_name="canidae",show=c("coords", "phylo", "ident"))
 canidae <- filter(canidae, !gnl == "", !fml == "") #Remove those occurrences without genus or family ID
-felidae<-  pbdb_occurrences (limit="all", base_name="felidae",show=c("coords", "phylo", "ident"))
+felidae <-  pbdb_occurrences (limit="all", base_name="felidae",show=c("coords", "phylo", "ident"))
 felidae <- filter(felidae, !gnl == "", !fml == "") #Remove those occurrences without genus or family ID
 
 x <- list(canidae,felidae) #through each taxonomic group into a list
 
+####  GENERATE LONGEVITY TABLES ####
 GenerateLongevityTable <- function(x){ #where x is a matrix of pbdb occurrence data fetched via pbdb_occurrences
   
   x <- as.data.frame(x)
@@ -48,3 +50,6 @@ df <- as.data.frame(outTable) #Save Result to list
 LongevityTables <- lapply(x, GenerateLongevityTable)
 names(LongevityTables) <- c("canid longevities","felid longevities")
 list2env(LongevityTables, envir = .GlobalEnv)
+
+#### PLOT GENUS LONGEVITIES ####
+
