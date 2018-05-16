@@ -66,10 +66,3 @@ for (i in 1:nrow(df)) {
 LongevityTables <- lapply(x, GenerateLongevities)
 names(LongevityTables) <- c("canid longevities","felid longevities")
 list2env(LongevityTables, envir = .GlobalEnv)
-
-#### PLOT GENUS LONGEVITIES ####
-
-
-
-
-
