@@ -46,5 +46,5 @@ df <- as.data.frame(outTable) #Save Result to list
 }
 
 LongevityTables <- lapply(x, GenerateLongevityTable)
-names(LongevityTables) <- c("canid longevities","felid longevities)
+names(LongevityTables) <- c("canid longevities","felid longevities")
 list2env(LongevityTables, envir = .GlobalEnv)
