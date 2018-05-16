@@ -9,13 +9,12 @@ taxachron_server<-(
 shinyServer(function(input, output) {
      
      dataInput<-reactive({
+          # specifies that we want the output to be in thousands of eyars
+          occurrences<-read.csv(paste("http://earthlifeconsortium.org/api_v1/occ?taxon=",input,"&ageunits=Ka",sep=""))
           
-          occurrences<-read.csv(paste("http://earthlifeconsortium.org/api_v1/occ?taxon=",input,sep=""))
-          
-          occurrences$mean_age<-rowMeans(cbind(occurrences$early_age,occurrences$late_age))
+          occurrences$mean_age<-rowMeans(cbind(occurrences$max_age,occurrences$min_age))
           
           return(occurrences)
-          
      })
      
      
@@ -90,26 +89,26 @@ taxachron_ui<-(
 shinyUI(fluidPage(
      
      # Application title.
-     titlePanel("First Appearances Calculator"),
+     titlePanel("Taxachron: Visualizing Taxa Longevity"),
      
      sidebarLayout(
           sidebarPanel(
                img(src ="firstApp_logo.png",height=120,width=120),
                
-               h4("Find the oldest representative of a group, based on data from the Paleobiology Database"),
+               h4("Visualizing the timeline of a taxa"),
                
-               textInput("taxon", "Enter a taxon name:","Omaliinae"),
+               textInput("taxon", "Enter a family or genus name:","Felidae"),
                
                helpText("Warning: large taxonomic groups may require
                         a few seconds (or more) to load."),
                
                submitButton("Submit"),
                
-               h5("If you use this information in a publication, please acknowledge the Paleobiology Database"),
+               h5("If you use this information in a publication, please acknowledge the Earth Life Consortium"),
                
-               h6("Comments or suggestions? Email mclapham@ucsc.edu"),
+               h6("Comments or suggestions? Email XXX"),
                
-               a("https://github.com/mclapham/firstAppearances")
+               a("XXXX")
                
                ),
           
