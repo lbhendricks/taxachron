@@ -5,10 +5,11 @@
 input<-"felidae"
 
 # download the data using the ELC API
-occurrences<-read.csv(paste("http://earthlifeconsortium.org/api_v1/occ?taxon=",input,"&ageunits=Ka&output=csv",sep=""))[1:30,]
+occurrences<-read.csv(paste("http://earthlifeconsortium.org/api_v1/occ?taxon=",input,"&ageunits=Ka&output=csv",sep=""))
 
 # not necessary when we have only one taxa that we're showing
-x <- list(occurrences) # each taxonomic group into a list
+#x <- list(occurrences) # each taxonomic group into a list
+x<-occurrences
 
 ####  function to GENERATE LONGEVITY TABLES ####
 GenerateLongevityTable <- function(x){ #where x is a matrix of pbdb occurrence data fetched via pbdb_occurrences
@@ -57,24 +58,26 @@ felidae<-GenerateLongevityTable(x)
 
 
 # try doing it outside of a function
-x <- as.data.frame(x)
-genera<-x$taxon #What are all genus occurrences for this taxonomic group?
+x <- as.data.frame(x)  # x is a matrix of  occurrence data fetched via ELC API
+genera<-as.character(x$taxon) #What are all occurrences for this taxonomic group?
 genus.names<-unique(genera) #What are the specific genus names?
 num.genera<-length(genus.names) #How many genera are there? (will be number of rows in the results matrix)
-outTable<-matrix(NA,nrow=num.genera,ncol=4)  # changed to 3 because we don't need family and order anymore
+outTable<-as.data.frame(matrix(NA,nrow=num.genera,ncol=4))  # ncol=5 changed to 3 because we don't need family and order anymore
 colnames(outTable)<-c("Taxa","FAD","LAD","Duration")#,"Family", "Order")
-rownames(outTable)<-genus.names
+#rownames(outTable)<-genus.names
+outTable$Taxa<-genus.names
 
-for(i in 1:5){
+# NOT WORKING RIGHT NOW
+for(species in 1:nrow(outTable)){
   
-  this.taxon <- x$taxon[i] #Define the taxa
-  all.occ.this.taxon <- dplyr::filter(x, taxon == this.taxon) #Select all rows of that taxon
+  this.taxon <- outTable[species,1] #Define the taxa
+  all.occ.this.taxon <- dplyr::filter(x, x$taxon == this.taxon) #Select all rows of that taxon
   FAD <- max(all.occ.this.taxon$max_age, na.rm = T) #Find the max value (FAD) of that taxon...
-  outTable[this.taxon,1] <- FAD #...and insert it into column 1 (FAD)
+  outTable[species,2] <- FAD #...and insert it into column 1 (FAD)
   LAD <- min(all.occ.this.taxon$min_age, na.rm = T) #Find the min value (LAD) of that taxon...
-  outTable[this.taxon,2] <- LAD #...and insert it into column 2
+  outTable[species,3] <- LAD #...and insert it into column 2
   longevity <- FAD - LAD #Calulate the species longevity...
-  outTable[this.taxon,3] <- longevity #...and insert it into column 3
+  outTable[species,4] <- longevity #...and insert it into column 3
   # don't need this because it should all be the same family in the initial version of the API
   #Family <- all.occ.this.taxon$fml[1] #Find the family that genus belongs to (the first one in case two are assigned)
   #outTable[this.taxon,4] <- as.character(Family) #...and insert the Family name into column 4
@@ -83,6 +86,6 @@ for(i in 1:5){
   #outTable[this.taxon,5] <- as.character(Order) #...and insert the Order name into column 5
   outTable<-outTable
   
-}
+  }
 
 df <- as.data.frame(outTable) #Save Result to list
