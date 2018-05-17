@@ -110,7 +110,7 @@ shinyUI(fluidPage(
                            tabPanel("Plot", plotOutput("plot"),
                                     downloadButton("downloadData", "Download occurrences")
                            ), 
-                           tabPanel("Table", h3("Oldest occurrences"),
+                           tabPanel("Table", h3("Species Longevities"),
                                     tableOutput("table1"),
                                     h3("Oldest occurrences of classified species"),
                                     tableOutput("table2"))
