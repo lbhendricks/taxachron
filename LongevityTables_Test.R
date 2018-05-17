@@ -1,5 +1,7 @@
 # code from Demo Derby.R
-# testing if it works with the ELC API instead of the pbdb package
+# testing if it works with the ELC API instead of the pbdb packagelibrary(RColorBrewer) #to make pretty colors
+library(ggplot2) #for plottinglibrary(RColorBrewer) #to make pretty colors
+library(dplyr) #for plotting
 
 # decide what genus/family to get info about
 input<-"felidae"
