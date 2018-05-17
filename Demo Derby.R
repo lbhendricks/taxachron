@@ -6,17 +6,14 @@ library(paleobioDB) #to read in fossil occurrence data from pbdb
 library(dplyr) #for data wrangling
 library(RColorBrewer) #to make pretty colors
 library(ggplot2) #for plotting
+library(scales) #for pretty scales
 
 #### LOAD IN OCCURRENCE DATA FROM PBDB ####
 canidae <-  pbdb_occurrences (limit="all", base_name="canidae",show=c("coords", "phylo", "ident")) %>% #download pbdb canidae data and
   filter(!gnl == "", !fml == "") #Remove those occurrences without genus or family ID
-felidae <-  pbdb_occurrences (limit="all", base_name="felidae",show=c("coords", "phylo", "ident")) %>% #download pbdb felidae data and
-  filter(!gnl == "", !fml == "") #Remove those occurrences without genus or family ID
-ursidae <-  pbdb_occurrences (limit="all", base_name="ursidae",show=c("coords", "phylo", "ident")) %>% #download pbdb felidae data and
-  filter(!gnl == "", !fml == "") #Remove those occurrences without genus or family ID
 
-x <- list(canidae,felidae,ursidae) #through each taxonomic group into a list
-family.names <- c("Canidae","Felidae","Ursidae")
+x <- list(canidae) #through each taxonomic group into a list
+family.names <- c("Canidae")
 
 ####  GENERATE LONGEVITY TABLES AND PLOT LONGEVITIES ####
 GenerateLongevities <- function(x){ #where x is a matrix of pbdb occurrence data fetched via pbdb_occurrences
@@ -48,7 +45,10 @@ df <- as.data.frame(outTable) #Save Result to list
 # Plot the longevities
 g <- ggplot(df, aes(x = Longevity, y = Genus)) +
   geom_segment(aes(x = as.numeric(as.character(LAD)), y = Genus, xend = as.numeric(as.character(FAD)), yend = Genus)) +
-  geom_text(aes(x = as.numeric(as.character(FAD)), y = Genus, label = Genus), nudge_x = 0.5, nudge_y = 0.5)
+  geom_text(aes(x = as.numeric(as.character(FAD)), y = Genus, label = Genus), nudge_x = 1, nudge_y = 1) +
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  ggtitle("Longevities")
 g
 
 }
