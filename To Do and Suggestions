@@ -1,0 +1,17 @@
+Some ideas for extensions to add to the Shiny App, as well as what we are hoping to do next:
+
+To Do:
+1) Fix occurrences download function, update it to change along with user input
+2) Seperate functions to generate plot and table
+3) Put in geom_rect for geology timescale, colored by age
+4) Update plot dimensions, text size, theme, etc to make it more readable
+5) Fix "download occurrences" button so that it actually works and the user can download the occurrence data returned by the API
+6) Create an icon for the app
+7) Post as a web app, link on PBDB and Neotoma websites
+
+Suggesitons from the workshop participants:
+- Offer a widget to order taxa (by length of species longevity? by when it went extinct? by phylogenetic relationship?)
+- Throw a dagger onto the taxa that are now extinct
+- Color a portion of the bar to show the uncertainty on species occurrence data (likely near the end and beginning of the longevity)
+- Timetree project - could include divergence dates (based on molecular data) to each species
+- Change bars into violin plots for each species, with width proportional to density of occurrences (potential problem - huge bias for more recent taxa because of availability of rock record, may need to use a rarefaction function)
