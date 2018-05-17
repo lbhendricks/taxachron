@@ -51,24 +51,9 @@ g <- ggplot(df, aes(x = Longevity, y = Genus)) +
   geom_text(aes(x = as.numeric(as.character(FAD)), y = Genus, label = Genus), nudge_x = 0.5, nudge_y = 0.5)
 g
 
-plot(1,1, type = 'n',
-     xlim = c(0.001, max(as.numeric(as.character(df$FAD)), na.rm = TRUE)),
-     ylim = c(0, nrow(df)),
-     xlab = "Millions of Years BP",
-     ylab = "Genera",
-     yaxt = "n",
-     main = df$Family[1])
-
-colors <- c(rgb(0.1, 0.1, 0.1, 0.1, 0.5),
-            rgb(1, 0, 0, 0, 0.5))
-
-for (i in 1:nrow(df)) {
-  segments(as.numeric(as.character(df$LAD[i])), i,
-           as.numeric(as.character(df$FAD[i])), i)
-           # col = colors[as.numeric(factor(df$Family))[i]])
-}
 }
 
 Longevities <- lapply(x, GenerateLongevities)
+Longevities
 
 #### end ####
