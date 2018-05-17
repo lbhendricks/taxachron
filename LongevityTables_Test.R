@@ -2,7 +2,7 @@
 # testing if it works with the ELC API instead of the pbdb package
 
 # decide what genus/family to get info about
-input<-"felidae"
+input<-"ursidae"
 
 # download the data using the ELC API
 occurrences<-read.csv(paste("http://earthlifeconsortium.org/api_v1/occ?taxon=",input,"&ageunits=Ka&output=csv",sep=""))
@@ -54,7 +54,7 @@ GenerateLongevityTable <- function(x){ #where x is a matrix of pbdb occurrence d
 df <- as.data.frame(outTable) #Save Result to list
 }
 
-felidae<-GenerateLongevityTable(x)
+LongevityTable<-GenerateLongevityTable(x)
 
 # dont't need these because we only have one API request  
 # LongevityTables <- lapply(x, GenerateLongevityTable)
