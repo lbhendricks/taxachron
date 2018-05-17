@@ -45,6 +45,7 @@ GenerateLongevityTable <- function(x){ #where x is a matrix of pbdb occurrence d
 df <- as.data.frame(outTable) #Save Result to list
 }
 
+felidae<-GenerateLongevityTable(x)
 
 # dont't need these because we only have one API request  
 # LongevityTables <- lapply(x, GenerateLongevityTable)
