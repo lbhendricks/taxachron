@@ -50,7 +50,6 @@ GenerateLongevityTable <- function(x){ #where x is a matrix of pbdb occurrence d
           #outTable[this.taxon,5] <- as.character(Order) #...and insert the Order name into column 5
           outTable<-outTable
           }
-
 df <- as.data.frame(outTable) #Save Result to list
 }
 
