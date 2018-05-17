@@ -14,7 +14,8 @@ x<-occurrences
 ####  function to GENERATE LONGEVITY TABLES ####
 GenerateLongevityTable <- function(x){ #where x is a matrix of pbdb occurrence data fetched via pbdb_occurrences
       #x <- as.data.frame(x)  # turn x into a data frame (holdover from version where multiple families are included)
-      x<-x[!is.na(c(x$min_age,x$max_age)),] # remove rows that have a NA for either min age or max age
+      x<-x[!is.na(x$min_age),] # remove rows that have a NA for either min age or max age
+      x<-x[!is.na(x$max_age),] # remove rows that have a NA for either min age or max age
       
       taxon_split<-strsplit(as.character(x$taxon)," ")  # split the taxon name on spaces
       genera<-NA       
